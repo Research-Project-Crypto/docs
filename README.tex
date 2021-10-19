@@ -1,0 +1,42 @@
+\documentclass[a4paper]{report}
+
+\usepackage[english]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+\usepackage[parfill]{parskip}
+
+% code
+\usepackage{minted}
+\setminted{frame=single,framesep=3pt,linenos}
+\usepackage{upquote}
+\usepackage{color}
+
+\graphicspath{{img/}}
+
+\begin{document}
+
+\begin{titlepage}
+    \author{Joren vanGoethem & Andreas Maerten}
+    \title{Research Project}
+\end{titlepage}
+
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\section{Documentation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{img/leeralgoritmes.png}
+    \caption{Overview learning algorithms}
+\end{figure}
