@@ -1,4 +1,4 @@
-\documentclass[a4paper]{report}
+\documentclass[a4paper]{article}
 
 \usepackage[english]{babel}
 \usepackage[margin=2cm]{geometry}
@@ -6,23 +6,23 @@
 \usepackage{float}
 \usepackage{caption}
 \usepackage{hyperref}
-\usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{wrapfig}
 \usepackage[parfill]{parskip}
-
-% code
-\usepackage{minted}
-\setminted{frame=single,framesep=3pt,linenos}
 \usepackage{upquote}
 \usepackage{color}
-
-\graphicspath{{img/}}
+\usepackage{amssymb}
+\usepackage{enumitem}
 
 \begin{document}
 
 \begin{titlepage}
-    \author{Joren vanGoethem & Andreas Maerten}
-    \title{Research Project}
+    \author{
+        vanGoethem, Joren 
+        \and 
+        Maerten, Andreas
+    }
+    \title{Research Project Documentation}
 \end{titlepage}
 
 \pagenumbering{gobble}
@@ -33,10 +33,28 @@
 
 \pagenumbering{arabic}
 
-\section{Documentation}
+\section{Data collection}
+\paragraph{Data}
+    For our training data we used both the crypto price data [Open, Low, High, Close, Volume] along with tweets and rss feeds related to cryptocurrencies.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/leeralgoritmes.png}
-    \caption{Overview learning algorithms}
-\end{figure}
+
+\section{Data preprocessing}
+\paragraph{Normalization}
+    The raw price data is not suitable for training a neural network with. We need to normalize all the data so the neural network can properly adjust to the data. for this we will be using the percentage change from one data point to the next.
+
+    the following formula can be used to calculate the percentage change, where P is the percentage change, V1 is the previous value and V2 is the value of which we want to calculate the percentage change over V1. the result can be a positive or a negative value.
+
+    \large \( P = \frac{ V_2 - V_1 }{ V_1 } \times 100 \)
+
+\paragraph{Labeling}
+    We will probably need to manually label tweets and rss feed data unless we can find a substantial kaggle dataset that is already labeled. Both tweets and rss articles can probably be inserted into the same model to predict whether the tweet or article is positive or negative towards a specific cryptocurrency.
+
+
+\section{AI models}
+\paragraph{Deep Reinforcement Learning}
+
+\paragraph{Long Short Term Memory}
+
+\paragraph{Sentiment Analysis}
+
+\end{document}
