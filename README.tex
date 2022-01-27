@@ -18,8 +18,8 @@
 
 \begin{titlepage}
     \author{
-        vanGoethem, Joren 
-        \and 
+        vanGoethem, Joren
+        \and
         Maerten, Andreas
     }
     \title{Research Project Documentation}
@@ -33,22 +33,49 @@
 
 \pagenumbering{arabic}
 
-\section{Data collection}
-\paragraph{Data}
-    For our training data we used both the crypto price data [Open, Low, High, Close, Volume] along with tweets and rss feeds related to cryptocurrencies.
+\section{Data Collection}
 
+We collect data from several sources in this project, crypto ticker info [Open, Close, Low, High, Volume] and along with that we collect data from Reddit, RSS feeds and Twitter Tweets.
 
-\section{Data preprocessing}
-\paragraph{Normalization}
-    The raw price data is not suitable for training a neural network with. We need to normalize all the data so the neural network can properly adjust to the data. for this we will be using the percentage change from one data point to the next.
+\subsection{Crypto Data}
 
-    the following formula can be used to calculate the percentage change, where P is the percentage change, V1 is the previous value and V2 is the value of which we want to calculate the percentage change over V1. the result can be a positive or a negative value.
+For our crypto data we've used the Binance Exchange as they have an API that allows us to fetch from the beginning till the end of all of their symbols.
+Their API ratelimits are pretty strict but as long as you keep this in mind you should able to fetch nearly every symbol in several days.
 
-    {\large \( P = \frac{ V_2 - V_1 }{ V_1 } \times 100 \)}
+The last of our data was collected on 28th September of 2021, with a total 1081 symbol pairs.
+At first we trained on every pair possible BNB/USDT, BNB/BTC, BNB/ETH, etc\dots afterwards we realised that this was detrimental to our training so it's advised to only used one other currency to pair your symbols with, we chose USDT as our main curreny.
 
-\paragraph{Labeling}
-    We will probably need to manually label tweets and rss feed data unless we can find a substantial kaggle dataset that is already labeled. Both tweets and rss articles can probably be inserted into the same model to predict whether the tweet or article is positive or negative towards a specific cryptocurrency.
+In the end we still had over 360 different symbol pairs with USDT and our AI can properly train on this.
 
+\subsection{Sentiment Analyse}
+
+For our sentiment analysis we collect data from several different communities, these being Twitter, Reddit and RSS Feeds (news articles/other).
+
+To collect our data from Reddit we need to manually fetch recent posts from subreddits we've selected. The few subreddits we've chosen to collect data from are CryptoCurrency, CryptoCurrencies, bitcoin and altcoin.
+
+RSS Feeds where easy to find but hard to process due to the vast difference in formatting used between news sites. We got the list
+
+We initial tried to get data from Twitter their API but were unable to do so since they didn't respond to our emails for a research oriented API key which would allow us to collect data from Tweets in the Twitter archives.
+
+\section{Data Pre-processing}
+
+\subsection{Normalization}
+
+The raw price data is not suitable for training a neural network with. We need to normalize all the data so the neural network can properly adjust to the data. for this we will be using the percentage change from one data point to the next.
+
+the following formula can be used to calculate the percentage change, where P is the percentage change, V1 is the previous value and V2 is the value of which we want to calculate the percentage change over V1. the result can be a positive or a negative value.
+
+{\large \( P = \frac{ V_2 - V_1 }{ V_1 } \times 100 \)}
+
+\subsection{Labeling}
+
+We will probably need to manually label tweets and rss feed data unless we can find a substantial kaggle dataset that is already labeled. Both tweets and rss articles can probably be inserted into the same model to predict whether the tweet or article is positive or negative towards a specific cryptocurrency.
+
+\section{Ticker Timescale Swap}
+
+Alternatively we've made a program from which you can swap a smaller time frame (1 minute) to another larger time frame (5min, 15min, 30min).
+
+With this we can test how our artificial intelligence trains on a different time frame or additionally training on one time frame (1min) and attempting to make predictions on another time frame (5min).
 
 \section{AI models}
 \paragraph{Deep Reinforcement Learning}
