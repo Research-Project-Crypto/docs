@@ -84,6 +84,42 @@
 
 \pagenumbering{arabic}
 
+\section{software}
+
+\subsection{Python}
+
+Before anything, it is important to make sure python is installed, python 3.9.x is highly recommended.
+You can install python from the following url:\newline\newline \href{https://www.python.org/downloads/}{https://www.python.org/downloads/}\newline
+
+Once python is installed you can double check the installation by opening up a terminal and entering the following command.
+
+\begin{lstlisting}[language=bash]
+    python -V
+\end{lstlisting}
+
+\subsection{CUDA}
+If you have an Nvidia graphics card, it is possible to run the model from there. To do this, a piece of
+software is required called CUDA. CUDA allows Nvidia gpu's to use their parallel computation prowess for
+the training and usage of AI models.\newline
+
+To install CUDA, you can follow the official Nvidia guide \href{https://docs.nvidia.com/cuda/
+cuda-installation-guide-microsoft-windows/index.html}{https://docs.nvidia.com/cuda/
+cuda-installation-guide-microsoft-windows/index.html}. To summarize it briefly, you will need two parts
+to install CUDA, the first is the installer software that will install the drivers necessary to use CUDA, 
+and the second counterpart is the cuDNN library. In order to download cuDNN you will need an Nvidia account
+for verification, the guide tells you how and where to install everything. Once CUDA is 
+installed you can test the installation with the following command.
+
+\begin{lstlisting}[language=bash]
+    nvcc --version
+\end{lstlisting}
+
+if you get anything similar to this your installation is succesfull.
+
+\begin{lstlisting}[language=bash]
+    nvcc --version
+\end{lstlisting}
+
 \section{Data Collector}
 
 \subsection{setup}
