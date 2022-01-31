@@ -1,0 +1,274 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[english]{babel}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage[parfill]{parskip}
+\usepackage{upquote}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+\lstset
+{ %Formatting for code in appendix
+    language=bash,
+    basicstyle=\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    commentstyle=\color{red},
+    keywordstyle=\color{blue}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \author{
+        vanGoethem, Joren
+        \and
+        Maerten, Andreas
+    }
+    \title{Research Project Installation Manual}
+\end{titlepage}
+
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\section{Data Collector}
+
+\subsection{setup}
+Setting up this repository is fairly simple, you can either clone the repo or download as a zip.
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Research-Project-Crypto/DataCollector.git 
+\end{lstlisting}
+
+you will need a binance api key and secret to get started collecting crypto price data but this can be aquired for free by making a binance account and going to the \href{https://www.binance.com/en/my/settings/api-management}{Binance API management page}[1], create an API-key and put it inside the crypto.py file.
+
+collecting price data can take a long time depending on how much data you want, to prevent API bans there is timer between each api call. you can always stop the program when you think you have enough data.
+
+To fetch reddit data you will also need to create an application on their site that has an api key and login. This can be found \href{https://www.reddit.com/prefs/apps}{here}[2]
+
+\section{Ticker Timescale-swap}
+
+The ticker timescale-swap application is used for changing the timescale of ticker data.
+
+For example you'll most likely want to convert the most accurate data you have (1min ticker) to something less specific than that (5min / 10min / etc...)
+
+\subsection{Cloning}
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Research-Project-Crypto/TickerTimescaleSwap.git --recursive
+\end{lstlisting}
+
+If you forgot to clone the repository with the recursive argument you always use the following command:
+
+\begin{lstlisting}[language=bash]
+git submodule update --init --recursive
+\end{lstlisting}
+
+\subsection{Build Dependencies}
+
+The following commands are for Arch based systems, they will give you an idea on what's required to port it to other systems.
+
+\begin{lstlisting}[language=bash]
+pacman -S --noconfirm --needed gcc make
+pacman -S --noconfirm --needed premake
+\end{lstlisting}
+
+\subsection{Compiling the Application}
+
+\begin{lstlisting}[language=bash]
+generate build instructions
+premake5 gmake2
+
+compile the actual application
+make config=release
+\end{lstlisting}
+
+\subsection{Using the Application}
+
+\subsubsection{Changing time rescale ratio}
+
+By default the time rescale is 1:60, currently you can't dynamically define this through command argument, so you'll have to to edit the code directly and recompile. To change the ratio go into the src/main.cpp file and locate where the processor.start() is called. If you pass a number in the .start method you can set the time rescale.
+
+\subsubsection{Arguments}
+
+\begin{table}[H]
+\begin{tabular}{ll}
+\textbf{Position} & \textbf{Argument}  \\
+1                 & Data Input Folder  \\
+2                 & Data Output Folder
+\end{tabular}
+\end{table}
+
+Example:
+\begin{lstlisting}[language=bash]
+TickerTimescaleSwap data/input_folder data/output_folder
+\end{lstlisting}
+
+\subsection{Verify Data Integrity}
+
+Included with this project is a python script with which you can verify the binary output data.
+
+\begin{lstlisting}[language=bash]
+python3 scripts/binary_reader.py
+\end{lstlisting}
+
+It will loop over all the cells slowly, this mostly to shortly verify calculation mistakes in the program.
+
+\section{Data Preprocessor}
+
+\subsection{cloning}
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Research-Project-Crypto/DataPreprocessor.git --recursive
+\end{lstlisting}
+
+If you forgot to clone the repository with the recursive argument you always use the following command:
+
+\begin{lstlisting}[language=bash]
+git submodule update --init --recursive
+\end{lstlisting}
+
+\subsection{Build Dependencies}
+
+The following commands are for Arch based systems, they will give you an idea on what's required to port it to other systems.
+
+\begin{lstlisting}[language=bash]
+pacman -S --noconfirm --needed gcc make
+pacman -S --noconfirm --needed premake
+
+yay -S ta-lib
+# or
+paru -S ta-lib
+\end{lstlisting}
+
+\subsection{Compiling the Application}
+
+\begin{lstlisting}[language=bash]
+generate build instructions
+premake5 gmake2
+
+compile the actual application
+make config=release
+\end{lstlisting}
+
+\subsection{Using the Application}
+
+With Arguments
+\begin{table}[H]
+\begin{tabular}{ll}
+\textbf{Position} & \textbf{Argument}  \\
+1                 & Data Input Folder  \\
+2                 & Data Output Folder
+\end{tabular}
+\end{table}
+
+Example:
+\begin{lstlisting}[language=bash]
+DataProcessor data/input_folder data/output_folder
+\end{lstlisting}
+
+Downside of argument only.
+With argument only mode you are unable to specify the type of the input data, you can only parse CSV text data.
+
+Using settings.json
+If you don't give any arguments the application will default to reading the settings from settings.json. only use the is\_binary option when you used our time rescaler since this will output to binary files to save disk space.
+
+\begin{lstlisting}[language=json]
+{
+    "input": {
+        "input_folder": "data/input",
+        "is_binary": false
+    },
+    "output": {
+        "output_folder": "data/output"
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Verify Data Integrity}
+
+Included with this project is a python script with which you can verify the binary output data.
+
+\begin{lstlisting}[language=bash]
+python3 scripts/binary_reader.py
+\end{lstlisting}
+
+It will loop over all the cells slowly, this mostly to shortly verify calculation mistakes in the program.
+
+\section{Model Testing}
+
+\subsection{Setting up local environment}
+
+Since certain pip packages don't work with the newest version of Python at the time of working on our project we were required to use an older version of Python. For this reason using a venv is recommended as it's easier to enforce the used Python version.
+
+\begin{lstlisting}[language=bash]
+python3.9 -m venv .venv
+source .venv/bin/activate
+\end{lstlisting}
+
+Then install the required pip packages for running the jupyter notebooks with the following command.
+
+\begin{lstlisting}[language=bash]
+pip install -r requirements.txt
+\end{lstlisting}
+
+\section{References}
+[1] Binance api management settings: \newline \href{https://www.binance.com/en/my/settings/api-management}{https://www.binance.com/en/my/settings/api-management}
+\newline
+[2] reddit application page \href{https://www.reddit.com/prefs/apps}{https://www.reddit.com/prefs/apps}
+
+\end{document}
