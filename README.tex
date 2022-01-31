@@ -45,7 +45,7 @@ Their API ratelimits are pretty strict but as long as you keep this in mind you 
 For context we're able to collect 15.3GB of raw minute candles from Binance.
 In the end we had over 360 different symbol pairs with USDT and our AI can properly train on this.
 
-To use the collector you need to go to the \href{https://www.binance.com/en/my/settings/api-management}{Binance API management page}, create an API-key and put it inside the crypto.py file.
+To use the collector you need to go to the \href{https://www.binance.com/en/my/settings/api-management}{Binance API management page}[1], create an API-key and put it inside the crypto.py file.
 
 Aside from that nothing will need to be changed and you can just run the file, it will start collecting all data from symbols trading with USDT.
 
@@ -53,7 +53,7 @@ Aside from that nothing will need to be changed and you can just run the file, i
 
 RSS Feeds don't require any API keys, they can be fetched by anyone at any point. We were unable to utilise this collector very well since there is no way to collect historical data, one needs to continously collect data to get any proper dataset. Also due to the data being collected from multiple different sources the formatting of the data can be vastly different which makes processing the data more difficult.
 
-We have selected quite a few crypto related RSS feeds which we found on the following blog: \href{https://blog.feedspot.com/cryptocurrency_rss_feeds/}{feedspot}
+We have selected quite a few crypto related RSS feeds which we found on the following blog: \href{https://blog.feedspot.com/cryptocurrency_rss_feeds/}{feedspot}[2]
 
 \subsection{Reddit}
 
@@ -133,5 +133,10 @@ For sentiment analysis we used a pretrained model from \href{https://huggingface
 \subsection{Model Testing}
 
 To test and compare our models we let them make predictions on parts of our dataset and plot their predictions on charts to see how they perform. We also calculated their profit/loss with the predictions they made and compared these to each other. In general our largest model performed the best so it is possible we could achieve better results with a larger model but for that we would need a bigger GPU with more VRAM and more training time. Our bottleneck up to now was our VRAM capacity since this was very quickly filled up by our timeseries sequences. We could mitigate this by decreasing batch size even further but this would significantly increase training time which was already very long.
+
+\section{References}
+[1] Binance api management settings: \newline \href{https://www.binance.com/en/my/settings/api-management}{https://www.binance.com/en/my/settings/api-management}
+\newline
+[2] Top 100 Cryptocurrency RSS Feeds on Feedspot: \newline \href{https://blog.feedspot.com/cryptocurrency_rss_feeds/}{https://blog.feedspot.com/cryptocurrency\_rss\_feeds/}
 
 \end{document}
