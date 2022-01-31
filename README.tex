@@ -40,36 +40,39 @@ We collect data from several sources in this project, crypto ticker info [Open, 
 \subsection{Crypto Data}
 
 For our crypto data we've used the Binance Exchange as they have an API that allows us to fetch from the beginning till the end of all of their symbols.
-Their API ratelimits are pretty strict but as long as you keep this in mind you should able to fetch nearly every symbol in several days.
+Their API ratelimits are pretty strict but as long as you keep this in mind you should able to fetch nearly every symbol in a day.
 
-The last of our data was collected on 28th September of 2021, with a total 1081 symbol pairs.
-At first we trained on every pair possible BNB/USDT, BNB/BTC, BNB/ETH, etc\dots afterwards we realised that this was detrimental to our training so it's advised to only used one other currency to pair your symbols with, we chose USDT as our main curreny.
+for context we're able to collect 15.3GB of raw minute candles from Binance.
+In the end we had over 360 different symbol pairs with USDT and our AI can properly train on this.
 
-In the end we still had over 360 different symbol pairs with USDT and our AI can properly train on this.
+To use the collector you need to go to the \href{https://www.binance.com/en/my/settings/api-management}{Binance API management page}, create an API-key and put it inside the crypto.py file.
 
-\subsection{Sentiment Analyse}
+Aside from that nothing will need to be changed and you can just run the file, it will start collecting all data from symbols trading with USDT.
 
-For our sentiment analysis we collect data from several different communities, these being Twitter, Reddit and RSS Feeds (news articles/other).
+\subsection{RSS feeds}
 
-To collect our data from Reddit we need to manually fetch recent posts from subreddits we've selected. The few subreddits we've chosen to collect data from are CryptoCurrency, CryptoCurrencies, bitcoin and altcoin.
+RSS Feeds don't require any API keys, they can be fetched by anyone at any point. We were unable to utilise this collector very well since there's no way to collect historical data, one needs to continously collect data to get any proper dataset. also due to the data being collected from multiple different sources the formatting of the data can be vastly different which makes processing the data more difficult.
 
-RSS Feeds where easy to find but hard to process due to the vast difference in formatting used between news sites. We got the list
+We've selected quite a few crypto related RSS feeds which we found on the following blog: \href{https://blog.feedspot.com/cryptocurrency_rss_feeds/}{feedspot}
 
-We initial tried to get data from Twitter their API but were unable to do so since they didn't respond to our emails for a research oriented API key which would allow us to collect data from Tweets in the Twitter archives.
+\subsection{Reddit}
 
-\section{Data Pre-processing}
+For Reddit we've collected data from crypto subreddits, the ones we've chosen seem to contain the most general data about crypto as collecting data from specific crypto tokens/coins might skew the sentiment of the data collected.
 
-\subsection{Normalization}
+So we've gone with the following subreddits:
+\begin{itemize}
+\item CryptoCurrency
+\item CryptoCurrencies
+\item bitcoin
+\item altcoin
+\end{itemize}
+With Reddit we were unable to collect old data as we can only fetch data from subreddits through tags "hot", "new" or "random". We were able however to get the 25 newest posts but then again for us to collect archival data we'd need to collect this of a really long period and the data collected could be of very low quality since anyone is able to post at any time.
 
-The raw price data is not suitable for training a neural network with. We need to normalize all the data so the neural network can properly adjust to the data. for this we will be using the percentage change from one data point to the next.
+There exist archives of Reddit online but there's no information on the structure available and these are fairly large for just textual content so for now we will not be using this data to train our model but it might prove to be a useful expansion to our research.
 
-the following formula can be used to calculate the percentage change, where P is the percentage change, V1 is the previous value and V2 is the value of which we want to calculate the percentage change over V1. the result can be a positive or a negative value.
+\subsection{Twitter}
 
-{\large \( P = \frac{ V_2 - V_1 }{ V_1 } \times 100 \)}
-
-\subsection{Labeling}
-
-We will probably need to manually label tweets and rss feed data unless we can find a substantial kaggle dataset that is already labeled. Both tweets and rss articles can probably be inserted into the same model to predict whether the tweet or article is positive or negative towards a specific cryptocurrency.
+We initially tried to get data from Twitter their API but were unable to do so since they didn't respond to our emails for a research oriented API key which would allow us to collect data from Tweets in the Twitter archives, without this access we would not be able to gather enough significant data about crypto related tweets.
 
 \section{Ticker Timescale Swap}
 
@@ -77,11 +80,56 @@ Alternatively we've made a program from which you can swap a smaller time frame 
 
 With this we can test how our artificial intelligence trains on a different time frame or additionally training on one time frame (1min) and attempting to make predictions on another time frame (5min).
 
+By default the timescale ratio is 1:60, this is because our input data were 1min tickers from which we wanted to make 60min a.k.a. 1h tickers, but in theory any variant is possible 1:7, 1:15.
+In the end we stuck with 1 minute candles because the model that was trained on this time frame was able to make more predictions than any other model.
+
+\section{Data Pre-processing}
+
+\subsection{Indicators}
+
+To augment our data for improved results we added technical indicators to our data. we have done extensive research into what indicators we should be using and what types of indicators exist and when which indicator is usefull. we have previous experience in making algoritmic trading bots using indicators only so we had some knowledge about these before starting this research project.
+
+The types of indicators used are: 
+\begin{itemize}
+    \item momentum indicators
+    \item Trend indicators
+    \item Volatility indicators
+    \item overlap studies
+    \item volume indicators
+\end{itemize}
+More information about the indicators we used and their formulas can be found in our Indicators Documentation.
+
+\subsection{Normalization}
+
+The raw price data is not suitable for training a neural network with. We need to normalize all the data so the neural network can properly adjust to the data. for this we will be using the percentage change from one data point to the next for most of our data, for indicators that are already on a scale of 0 to 100 we will just divide this by 100 to get them on a scale of 0 to 1.
+
+the following formula can be used to calculate the percentage change, where P is the percentage change, V1 is the previous value and V2 is the value of which we want to calculate the percentage change over V1. the result can be a positive or a negative value.
+
+{\large \( P = \frac{ V_2 - V_1 }{ V_1 } \times 100 \)}
+
+\subsection{Labeling}
+
+We used some basic logic to label our data with buy and sell targets for our model to train on, these targets should be the 'perfect' result. since we can place these after seeing what comes next it is easy for us to determine what the best buying and selling points are. the AI will have to try and predict this which is a way more difficult task.
+
 \section{AI models}
-\paragraph{Deep Reinforcement Learning}
+\subsection{Training}
 
-\paragraph{Long Short Term Memory}
+We started using Pytorch to try and make a model that used Reinforcement Learning for training. however we quickly stumbled into problems with pytorch and LSTM layers, apparently the latest few versions of Pytorch have memory leaks in LSTM layers causing our model to crash after a short while.
+We then switched to Tensorflow but were not satisfied with the training speed of reinforcement learning and quickly moved on to labelled training which was a big improvement in training speed. this was probably the best choice because of the limited time we had for this project.
 
-\paragraph{Sentiment Analysis}
+\subsection{Long Short Term Memory}
+
+Our model is made up of mostly LSTM layers with 2 final Dense layers.
+We feed a series of data through our model, usually consisting of multiple hours or even days of data, depending on whether we were testing minute candles all the way up to hour candles.
+we tried multiple configurations of models ranging from 3 LSTM layers up to 10 LSTM layers. after these always a smaller dense layer and an output layer of 3 neurons with a softmax activation. One for each possible action: Hold, Buy and Sell.
+
+
+\subsection{Sentiment Analysis}
+
+for sentiment analysis we used a pretrained model from \href{https://huggingface.co/siebert/sentiment-roberta-large-english}{Huggingface}, this model showed good results on our small dataset of reddit and rss feeds but sadly we did not have enough data to properly use for AI training. This would however be an interesting expansion to look into in the future with sufficient data.
+
+\subsection{Model Testing}
+
+To test and compare our models we let them make predictions on parts of our dataset and plot their predictions on charts to see how they perform. we also calculated their profit/loss with the predictions they made and compared these to each other, In general our largest model performed the best so it is possible we could achieve better results with a larger model but for that we need a bigger GPU with more VRAM and more training time, our bottleneck up to now was our VRAM capacity since this was very quickly filled up by our timeseries sequences, we could mitigate this by decreasing batch size even further but this would significantly increase training time which was already very long up.
 
 \end{document}
